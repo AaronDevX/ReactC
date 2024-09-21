@@ -5,6 +5,10 @@ import TabButton from "./components/TabButton";
 
 
 function App() {
+    function handleSelect(clicked){
+        console.log(clicked);
+    }
+
     return (
         <div>
             <Header/>
@@ -20,10 +24,10 @@ function App() {
                 </section>
                 <section id="examples">
                     <menu>
-                        <TabButton>Concepts</TabButton>
-                        <TabButton>JSX</TabButton>
-                        <TabButton>Props</TabButton>
-                        <TabButton>State</TabButton>
+                        <TabButton onSelect={()=> handleSelect("Concepts")}>Concepts</TabButton>
+                        <TabButton onSelect={()=> handleSelect("JSX")}>JSX</TabButton>
+                        <TabButton onSelect={()=> handleSelect("Props")}>Props</TabButton>
+                        <TabButton onSelect={()=> handleSelect("State")}>State</TabButton>
                     </menu>
                 </section>
             </main>
