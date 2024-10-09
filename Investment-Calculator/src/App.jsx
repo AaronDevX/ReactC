@@ -4,8 +4,6 @@ import InputContainer from "./components/InputContainer.jsx";
 import Results from "./components/Results.jsx";
 import {calculateInvestmentResults} from "./util/investment.js";
 
-
-
 let DEFAULT_DATA = {
   initialInvestment: 0,
   annualInvestment: 0,
@@ -16,6 +14,7 @@ let DEFAULT_DATA = {
 export default function App() {
   const [dataUpdated, setDataUpdated] = useState(DEFAULT_DATA);
   const investmentData = calculateInvestmentResults(dataUpdated);
+  const inputIsValid = dataUpdated.duration >= 1;
 
   function UpdateData(name, value) {
     setDataUpdated((beforeData) => {
@@ -26,15 +25,12 @@ export default function App() {
     })
   }
 
-  console.log(investmentData)
-
-
-
   return (
     <>
       <Header />
       <InputContainer fn={UpdateData}/>
-      <Results data={investmentData}/>
+      {!inputIsValid && <p className="center">Please enter a valid duration (greater than zero)</p>}
+      {inputIsValid && <Results data={investmentData}/>}
     </>
   )
 }

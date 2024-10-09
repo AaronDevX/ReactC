@@ -14,7 +14,7 @@ export default function Results({data}){
             </thead>
             <tbody>
             {data.map(yearObj => (
-                <tr key={parseInt(yearObj.year)}>
+                <tr key={yearObj.year}>
                     <td>{parseInt(yearObj.year)}</td>
                     <td>{formatter.format(parseInt(yearObj.valueEndOfYear))}</td>
                     <td>{formatter.format(parseInt(yearObj.interest))}</td>

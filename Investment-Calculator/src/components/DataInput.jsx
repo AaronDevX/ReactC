@@ -3,9 +3,12 @@ export default function DataInput({nameInput, name, saveData}) {
         saveData(name, parseFloat(e.target.value));
     }
     return (
-        <div>
+        <p>
             <label htmlFor={nameInput}>{nameInput}</label>
-            <input onChange={extractData} name={nameInput} type={name === "expectedReturn" ? "float" : "number"}/>
-        </div>
+            <input
+                onChange={extractData}
+                name={nameInput}
+                type={name === "expectedReturn" ? "float" : "number"} required/>
+        </p>
     )
 }
