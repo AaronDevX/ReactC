@@ -2,6 +2,7 @@ import {useState} from "react";
 import Player from "./components/Player.jsx";
 import GameBoard from "./components/GameBoard.jsx";
 import Log from "./components/Log.jsx";
+import GameOver from "./components/GameOver.jsx";
 import {WINNING_COMBINATIONS} from "./winning-combinations.js";
 
 
@@ -25,7 +26,7 @@ function deriveActivePlayer(turns){
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
   let activePlayer = deriveActivePlayer(gameTurns);
-  let gameBoard = initialGameBoard;
+  let gameBoard = [...initialGameBoard.map(row => [...row])];
   let winner = false
 
 // Returns an array of Objects with the Moves Information
@@ -61,6 +62,13 @@ function App() {
       }
   }
 
+  const isDraw = gameTurns.length === 9 && !winner;
+
+  function handleRestart(){
+      setGameTurns([]);
+      winner = null;
+  }
+
   return (
     <main>
         <div id="game-container">
@@ -68,7 +76,7 @@ function App() {
                 <Player initialName="Player 1" symbol="X" isActive={activePlayer === "X"}/>
                 <Player initialName="Player 2" symbol="O" isActive={activePlayer === "O"}/>
             </ol>
-            {winner && <p>{winner} win the game</p>}
+            {(winner || isDraw) && <GameOver winner={winner} restart={handleRestart}/>}
             <GameBoard board={gameBoard} onSelectSquare={changeActivePlayer}/>
         </div>
         <Log turns={gameTurns}/>
