@@ -1,29 +1,64 @@
 import {useState} from "react";
-
 import Player from "./components/Player.jsx";
 import GameBoard from "./components/GameBoard.jsx";
 import Log from "./components/Log.jsx";
+import {WINNING_COMBINATIONS} from "./winning-combinations.js";
+
+
+const initialGameBoard = [
+    [null, null, null],
+    [null, null, null],
+    [null, null, null],
+]
+
+//Returns the last player of an array
+function deriveActivePlayer(turns){
+    let currentPlayer = "X";
+
+    if(turns.length > 0 && turns[0].player === "X"){
+        currentPlayer = "O";
+    }
+    return currentPlayer
+}
 
 
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
-  const [activePlayer, setActivePlayer] = useState("X");
+  let activePlayer = deriveActivePlayer(gameTurns);
+  let gameBoard = initialGameBoard;
+  let winner = false
 
+// Returns an array of Objects with the Moves Information
   function changeActivePlayer(row, col) {
-      setActivePlayer((prevPlayer) => prevPlayer === "X" ? "O" : "X");
-
       setGameTurns((prevTurns)=> {
-          let currentPlayer = "X";
-
-          if(gameTurns.length > 0 && gameTurns[0].player === "X"){
-              currentPlayer = "O";
-          }
+          let actualPlayer = deriveActivePlayer(prevTurns)
 
           return [
-              {square: {row, col}, player: currentPlayer},
+              {square: {row, col}, player: actualPlayer},
               ...prevTurns
           ]
       });
+  }
+
+  // Writes turns on the GameBoard
+  for(const turn of gameTurns){
+      const {square, player} = turn;
+      const {row, col} = square;
+
+      gameBoard[row][col] = player;
+  }
+
+  // check if there is a winner
+  for(const combination of WINNING_COMBINATIONS){
+      const firstSquareSymbol = gameBoard[combination[0].row][combination[0].column];
+      const secondSquareSymbol = gameBoard[combination[1].row][combination[1].column];
+      const thirdSquareSymbol = gameBoard[combination[2].row][combination[2].column];
+
+      if(firstSquareSymbol &&
+          firstSquareSymbol === secondSquareSymbol &&
+          firstSquareSymbol === thirdSquareSymbol){
+          winner = firstSquareSymbol;
+      }
   }
 
   return (
@@ -33,9 +68,10 @@ function App() {
                 <Player initialName="Player 1" symbol="X" isActive={activePlayer === "X"}/>
                 <Player initialName="Player 2" symbol="O" isActive={activePlayer === "O"}/>
             </ol>
-            <GameBoard turns={gameTurns} onSelectSquare={changeActivePlayer}/>
+            {winner && <p>{winner} win the game</p>}
+            <GameBoard board={gameBoard} onSelectSquare={changeActivePlayer}/>
         </div>
-        <Log />
+        <Log turns={gameTurns}/>
     </main>
   )
 }
