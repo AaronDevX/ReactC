@@ -1,5 +1,25 @@
 import { useState } from 'react';
-import styles from './Inputs.module.css';
+import styled from 'styled-components';
+import CustomInput from './CustomInput';
+import Actions from "./Actions.jsx";
+
+const AuthInputsTarget = styled.div`
+  width: 100%;
+  max-width: 28rem;
+  padding: 2rem;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, #474232 0%, #28271c 100%);
+  color: white;
+`
+
+const Controls = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+`
 
 export default function AuthInputs() {
   const [enteredEmail, setEnteredEmail] = useState('');
@@ -18,49 +38,20 @@ export default function AuthInputs() {
     setSubmitted(true);
   }
 
-  let labelStyleEmail = styles.label, inputStyleEmail = styles.input;
-  let labelStylePass = styles.label, inputStylePass = styles.input;
-
-  if(submitted && !enteredEmail.includes('@')){
-    labelStyleEmail += " " + styles.invalidLabel;
-    inputStyleEmail += ` ${styles.invalidInput}`;
-  }
-
-  if(submitted && enteredPassword.trim().length < 6){
-    labelStylePass += ` ${styles.invalidLabel}`;
-    inputStylePass += ` ${styles.invalidInput}`;
-  }
-
-
+  const emailNotValid = submitted && !enteredEmail.includes('@');
+  const passwordNotValid = submitted && enteredPassword.trim().length < 6;
 
   return (
-    <div id="auth-inputs" className={styles.authInputs}>
-      <div className={styles.controls} >
-        <p>
-          <label className={labelStyleEmail}>Email</label>
-          <input
-            type="email"
-            className={inputStyleEmail}
-            onChange={(event) => handleInputChange('email', event.target.value)}
-          />
-        </p>
-        <p>
-          <label className={labelStylePass}>Password</label>
-          <input
-            type="password"
-            className={inputStylePass}
-            onChange={(event) =>
-              handleInputChange('password', event.target.value)
-            }
-          />
-        </p>
-      </div>
-      <div className={styles.actions}>
-        <button type="button" className={styles.textButton}>
-          Create a new account
-        </button>
-        <button className={styles.button} onClick={handleLogin}>Sign In</button>
-      </div>
-    </div>
+    <AuthInputsTarget>
+      <Controls>
+        <CustomInput invalid={emailNotValid} label={"Email"} type="email" onChange={(event) => handleInputChange('email', event.target.value)}/>
+        <CustomInput invalid={passwordNotValid} label={"Password"} type="password" onChange={(event) => handleInputChange('password', event.target.value)}/>
+      </Controls>
+      <Actions
+          btnText="Create a new account"
+          btn="Sign In"
+          fn={handleLogin}
+      />
+    </AuthInputsTarget>
   );
 }
