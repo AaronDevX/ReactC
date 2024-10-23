@@ -1,18 +1,30 @@
 import {useRef, useState} from "react";
 
-export default function ProjectSelected({project, index, addTask}) {
-   const [tasksArr, setTasksArr] = useState([...project.tasks]);
+export default function ProjectSelected({projects, id, addTask}) {
+   const [tasksArr, setTasksArr] = useState(projects.find(project=> project.id === id));
+   console.log(tasksArr)
    const task = useRef();
 
    function handleClick(){
-       setTasksArr(beforeTasks=>{
-           return [...beforeTasks, task.current.value]
+       setTasksArr(beforeProject =>{
+           const updatedTasks = [...beforeProject.tasks, task.current.value];
+           addTask(id, updatedTasks);
+           return {
+               ...beforeProject,
+               tasks: updatedTasks
+           };
        })
-       addTask(index, tasksArr);
    }
+
    function clearTask(index){
-       setTasksArr(beforeTasks=> beforeTasks.filter((_,i)=> i !== index))
-       addTask(index, tasksArr);
+       setTasksArr(beforeProject => {
+           const updatedTasks = [...beforeProject.tasks.filter((_,i)=> i !== index)]
+           addTask(id, updatedTasks);
+           return {
+               ...beforeProject,
+               tasks: updatedTasks
+           }
+       })
    }
 
    return(
@@ -20,12 +32,12 @@ export default function ProjectSelected({project, index, addTask}) {
            <header className="pb-4 mb-4 border-b-2 border-stone-300">
                <div className="flex justify-between">
                    <div>
-                       <h1 className="text-3xl font-bold text-stone-600 mb-2">{project.title}</h1>
-                       <p className="mb-4 text-stone-400">{project.date}</p>
+                       <h1 className="text-3xl font-bold text-stone-600 mb-2">{tasksArr.title}</h1>
+                       <p className="mb-4 text-stone-400">{tasksArr.date}</p>
                    </div>
                    <button className="text-stone-600 hover:text-stone-950">Delete</button>
                </div>
-               <p className="text-stone-600 whitespace-pre-wrap">{project.description}</p>
+               <p className="text-stone-600 whitespace-pre-wrap">{tasksArr.description}</p>
            </header>
            <div>
                <h2>Tasks</h2>
@@ -34,7 +46,7 @@ export default function ProjectSelected({project, index, addTask}) {
                    <button onClick={handleClick}>Add Task</button>
                </div>
                <ul>
-                   {tasksArr.length > 0 && tasksArr.map((task, index) => (
+                   {tasksArr.tasks.length>0 && tasksArr.tasks.map((task, index) => (
                        <>
                            <li key={index}>{task}</li>
                            <button onClick={()=>clearTask(index)}>Clear</button>

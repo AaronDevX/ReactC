@@ -7,7 +7,7 @@ let Projects = []
 
 function App() {
   const [newProject, setNewProject] = useState(false);
-  const [projectIndex, setProjectIndex] = useState(null);
+  const [actualSelectedProject, setActualSelectedProject] = useState(null);
   let showPanel
 
   function handleClick() {
@@ -16,7 +16,6 @@ function App() {
 
   function saveProject(projectInfo) {
       Projects.push(projectInfo);
-      console.log(Projects);
       setNewProject(false)
   }
 
@@ -25,20 +24,24 @@ function App() {
   }
 
   function selectProject(index){
-      setProjectIndex(index);
+      setActualSelectedProject(index);
+      console.log(actualSelectedProject)
   }
 
-  function addTask(index, tasksArr){
-    Projects[index].tasks = [...tasksArr];
-    console.log(Projects);
+  function addTask(id, tasksArr){
+    Projects = Projects.map(project => {
+        if(project.id === id){
+            project.tasks = [...tasksArr];
+        }
+    })
   }
 
   if(newProject){
       showPanel = <NewProjectForm saveProject={saveProject} cancelProject={cancelProject}/>
-  }else if(!newProject && projectIndex === null){
+  }else if(!newProject && actualSelectedProject === null){
       showPanel = <NoProjectSelected newProject={handleClick}/>
   }else{
-      showPanel = <ProjectSelected project={Projects[projectIndex]} index={projectIndex} addTask={addTask}/>
+      showPanel = <ProjectSelected projects={Projects} id={actualSelectedProject} addTask={addTask}/>
   }
 
   return (

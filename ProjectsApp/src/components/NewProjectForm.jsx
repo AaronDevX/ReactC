@@ -11,6 +11,7 @@ export default function NewProjectForm({saveProject, cancelProject}) {
         projectInfo.title = title.current.value;
         projectInfo.description = description.current.value;
         projectInfo.date = date.current.value;
+        projectInfo.id = Date.now()
         projectInfo.tasks = []
 
         saveProject(projectInfo);
