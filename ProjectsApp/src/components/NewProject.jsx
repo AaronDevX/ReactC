@@ -1,9 +1,36 @@
+import {useRef} from "react";
 import Input from "./Input.jsx";
+import Modal from "./Modal.jsx";
 
-export default function NewProject() {
+export default function NewProject({cancelProject, saveProject}) {
+    const title = useRef(null);
+    const description = useRef(null);
+    const date = useRef(null);
+    const dialog = useRef(null);
+    let valid
+
+    function handleCheckData(){
+        const titleValue = title.current.value;
+        const descriptionValue = description.current.value;
+        const dateValue = date.current.value;
+
+        if(titleValue === "" || descriptionValue === "" || dateValue === ""){
+            valid = false;
+            dialog.current.open();
+        }else{
+            const project = {
+                title: titleValue,
+                description: descriptionValue,
+                date: dateValue,
+                id: Date.now()
+            }
+            saveProject(project)
+        }
+    }
+
     return (
         <>
-            {/*<Modal ref={modal} buttonCaption="Okay">
+            <Modal buttonCaption="Okay" ref={dialog}>
                 <h2 className="text-xl font-bold text-stone-700 my-4">Invalid Input</h2>
                 <p className="text-stone-600 mb-4">
                     Oops ... looks like you forgot to enter a value.
@@ -11,13 +38,13 @@ export default function NewProject() {
                 <p className="text-stone-600 mb-4">
                     Please make sure you provide a valid value for every input field.
                 </p>
-            </Modal>*/}
+            </Modal>
             <div className="w-[35rem] mt-16">
                 <menu className="flex items-center justify-end gap-4 my-4">
                     <li>
                         <button
                             className="text-stone-800 hover:text-stone-950"
-                            onClick={onCancel}
+                            onClick={cancelProject}
                         >
                             Cancel
                         </button>
@@ -25,15 +52,16 @@ export default function NewProject() {
                     <li>
                         <button
                             className="px-6 py-2 rounded-md bg-stone-800 text-stone-50 hover:bg-stone-950"
+                            onClick={handleCheckData}
                         >
                             Save
                         </button>
                     </li>
                 </menu>
                 <div>
-                    <Input type="text" label="Title" />
-                    <Input label="Description" textarea />
-                    <Input type="date" label="Due Date" />
+                    <Input type="text" ref={title} label="Title" />
+                    <Input label="Description" ref={description} textarea />
+                    <Input type="date" ref={date} label="Due Date" />
                 </div>
             </div>
         </>
