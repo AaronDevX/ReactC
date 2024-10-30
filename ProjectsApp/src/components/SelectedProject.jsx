@@ -1,4 +1,13 @@
-export default function SelectedProject({projects, selectedProjectId, deleteProject}) {
+import Tasks from "./Tasks.jsx";
+
+export default function SelectedProject(
+    {projects,
+    selectedProjectId,
+    deleteProject,
+    tasks,
+    deleteTask,
+    addTask}) {
+
     const project = projects.find((project) => project.id === selectedProjectId)
     return (
         <div className="w-[35rem] mt-16">
@@ -19,6 +28,7 @@ export default function SelectedProject({projects, selectedProjectId, deleteProj
                     {project.description}
                 </p>
             </header>
+            <Tasks tasks={tasks} onDelete={deleteTask} onAdd={addTask} projectId={selectedProjectId}/>
         </div>
     )
 }
