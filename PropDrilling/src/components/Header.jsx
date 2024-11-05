@@ -1,5 +1,5 @@
 import { useRef, useContext } from 'react';
-import { CartContext } from "../store/shoping-cart-context.js";
+import { CartContext } from "../store/shoping-cart-context.jsx";
 import CartModal from './CartModal.jsx';
 
 export default function Header() {
