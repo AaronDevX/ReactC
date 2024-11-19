@@ -1,17 +1,11 @@
-import {useState, useEffect} from "react";
 import {useGetCatUrl} from "./hooks/useGetCatUrl.js";
-import getRandomFact from "./services/getRandomFact.js";
-
+import randomFact from "./services/getRandomFact.js";
 const App = () => {
-    const [catFact, setCatFact] = useState("Cat Facts Page")
+    const { catFact, refreshFact } = randomFact()
     const { catUrl } = useGetCatUrl({catFact})
 
-    useEffect(() => {
-        getRandomFact().then(fact => setCatFact(fact))
-    }, [])
-
     function handleClick(){
-        getRandomFact().then(fact => setCatFact(fact))
+        refreshFact()
     }
 
     return (

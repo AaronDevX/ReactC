@@ -1,3 +1,5 @@
+import {useEffect, useState} from "react";
+
 const CAT_FACT_ENDPOINT = "https://catfact.ninja/fact"
 
 /*export default function getRandomFact() {
@@ -6,10 +8,18 @@ const CAT_FACT_ENDPOINT = "https://catfact.ninja/fact"
             .then(data => {return data.fact})
     }*/
 
-async function getRandomFact() {
-    const response = await fetch(CAT_FACT_ENDPOINT)
-    const data = await response.json()
-    return data.fact
+function randomFact() {
+    const [catFact, setCatFact] = useState("")
+
+    async function refreshFact(){
+        const response = await fetch(CAT_FACT_ENDPOINT)
+        const data = await response.json()
+        setCatFact(data.fact)
+    }
+
+    useEffect(refreshFact,[])
+
+    return {catFact, refreshFact}
 }
 
-export default getRandomFact
+export default randomFact
