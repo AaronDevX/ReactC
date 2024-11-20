@@ -2,7 +2,28 @@ h1{
     text-align: center;
 }
 
+body{
+    max-width: 80%;
+}
+
 form{
     display: flex;
     justify-content: center;
+}
+
+.error{
+    color: red;
+    text-align: center;
+}
+
+.movies{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 35px;
+}
+
+.movie{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
