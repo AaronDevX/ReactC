@@ -1,14 +1,21 @@
 import useValidate from "./hooks/useValidate";
 import Movies from "./components/Movies";
 import useMovies from "./hooks/useMovies.js";
+import {useEffect, useState} from "react";
 
 const App = () => {
     const {query, setQuery, error} = useValidate();
     const {setSearch, movies, loading, errorReq } = useMovies({query});
 
+    useEffect(() => {
+        const time = setTimeout(()=>{
+            setSearch(query);
+        }, 700)
+        return () => clearTimeout(time);
+    }, [query])
+
     function handleSubmit(e) {
         e.preventDefault();
-        setSearch(query)
     }
 
     function handleChange(e) {
