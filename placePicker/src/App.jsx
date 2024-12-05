@@ -54,7 +54,7 @@ function App() {
 
   return (
     <>
-      {isOpen  && <Modal isOpen={isOpen}>
+      {isOpen  && <Modal isOpen={isOpen} onCancel={handleStopRemovePlace}>
         <DeleteConfirmation
             onCancel={handleStopRemovePlace}
             onConfirm={handleRemovePlace}
