@@ -7,7 +7,8 @@ import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import {sortPlacesByDistance} from "./loc.js";
 
-const initialPickedPlaces = JSON.parse(localStorage.getItem('pickedPlaces')) || [];
+const pickedPlacesIds = JSON.parse(localStorage.getItem('pickedPlaces')) || [];
+const initialPickedPlaces = pickedPlacesIds.map( id => AVAILABLE_PLACES.find(place => place.id === id));
 
 function App() {
   const selectedPlace = useRef();
@@ -37,9 +38,13 @@ function App() {
         return prevPickedPlaces;
       }
       const place = availablePlaces.find((place) => place.id === id);
-      localStorage.setItem('pickedPlaces', JSON.stringify([place, ...prevPickedPlaces]));
       return [place, ...prevPickedPlaces];
     });
+
+    const placesIDs = JSON.parse(localStorage.getItem('pickedPlaces')) || [];
+    if(placesIDs.indexOf(id) === -1){
+      localStorage.setItem('pickedPlaces', JSON.stringify([id, ...placesIDs]));
+    }
   }
 
   function handleRemovePlace() {
@@ -49,6 +54,10 @@ function App() {
           return places;
         }
     );
+
+    const placesIDs = JSON.parse(localStorage.getItem('pickedPlaces')) || [];
+    localStorage.setItem('pickedPlaces', JSON.stringify(placesIDs.filter((place) => place.id !== selectedPlace.current)));
+
     setIsOpen(false)
   }
 
