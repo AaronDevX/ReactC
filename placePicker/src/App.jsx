@@ -10,10 +10,10 @@ import {sortPlacesByDistance} from "./loc.js";
 const initialPickedPlaces = JSON.parse(localStorage.getItem('pickedPlaces')) || [];
 
 function App() {
-  const modal = useRef();
   const selectedPlace = useRef();
   const [pickedPlaces, setPickedPlaces] = useState(initialPickedPlaces);
   const [availablePlaces, setAvailablePlaces] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(position => {
@@ -23,12 +23,12 @@ function App() {
   }, [])
 
   function handleStartRemovePlace(id) {
-    modal.current.open();
+    setIsOpen(true)
     selectedPlace.current = id;
   }
 
   function handleStopRemovePlace() {
-    modal.current.close();
+    setIsOpen(false)
   }
 
   function handleSelectPlace(id) {
@@ -49,17 +49,17 @@ function App() {
           return places;
         }
     );
-    modal.current.close();
+    setIsOpen(false)
   }
 
   return (
     <>
-      <Modal ref={modal}>
+      {isOpen  && <Modal isOpen={isOpen}>
         <DeleteConfirmation
-          onCancel={handleStopRemovePlace}
-          onConfirm={handleRemovePlace}
+            onCancel={handleStopRemovePlace}
+            onConfirm={handleRemovePlace}
         />
-      </Modal>
+      </Modal>}
 
       <header>
         <img src={logoImg} alt="Stylized globe" />
