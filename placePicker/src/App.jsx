@@ -1,15 +1,26 @@
-import { useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 import Places from './components/Places.jsx';
 import { AVAILABLE_PLACES } from './data.js';
 import Modal from './components/Modal.jsx';
 import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
+import {sortPlacesByDistance} from "./loc.js";
+
+const initialPickedPlaces = JSON.parse(localStorage.getItem('pickedPlaces')) || [];
 
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
-  const [pickedPlaces, setPickedPlaces] = useState([]);
+  const [pickedPlaces, setPickedPlaces] = useState(initialPickedPlaces);
+  const [availablePlaces, setAvailablePlaces] = useState([]);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(position => {
+      const places = sortPlacesByDistance(AVAILABLE_PLACES, position.coords.latitude, position.coords.longitude);
+      setAvailablePlaces(places);
+    })
+  }, [])
 
   function handleStartRemovePlace(id) {
     modal.current.open();
@@ -25,14 +36,18 @@ function App() {
       if (prevPickedPlaces.some((place) => place.id === id)) {
         return prevPickedPlaces;
       }
-      const place = AVAILABLE_PLACES.find((place) => place.id === id);
+      const place = availablePlaces.find((place) => place.id === id);
+      localStorage.setItem('pickedPlaces', JSON.stringify([place, ...prevPickedPlaces]));
       return [place, ...prevPickedPlaces];
     });
   }
 
   function handleRemovePlace() {
-    setPickedPlaces((prevPickedPlaces) =>
-      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
+    setPickedPlaces((prevPickedPlaces) => {
+          const places = prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
+          localStorage.setItem('pickedPlaces', JSON.stringify(places));
+          return places;
+        }
     );
     modal.current.close();
   }
@@ -63,7 +78,7 @@ function App() {
         />
         <Places
           title="Available Places"
-          places={AVAILABLE_PLACES}
+          places={availablePlaces}
           onSelectPlace={handleSelectPlace}
         />
       </main>
