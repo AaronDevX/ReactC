@@ -4,10 +4,10 @@ import valid from "../assets/valid.js";
 export default function useVerify() {
     const [actualQuestion, setActualQuestion] = useState(0);
     const [questionState, setQuestionState] = useState("respond")
-    const [answerValid, setAnswerValid] = useState(false)
+    const [answerValid, setAnswerValid] = useState({type: false, index: -1})
     const userAnswers = useRef([])
 
-    const respondQuestion = useCallback((selectedAnswer = "")=>{
+    const respondQuestion = useCallback((selectedAnswer = "", index = -1)=>{
         if(userAnswers.current[actualQuestion]) return
 
         setQuestionState("responded")
@@ -15,19 +15,19 @@ export default function useVerify() {
         userAnswers.current = [...userAnswers.current, selectedAnswer];
 
         if(selectedAnswer === ""){
-            setAnswerValid(false);
+            setAnswerValid({type: false, index: -1});
             return;
         }
 
         if (selectedAnswer === valid[actualQuestion]) {
-            setAnswerValid(true);
+            setAnswerValid({type: true, index: index});
         }else{
-            setAnswerValid(false);
+            setAnswerValid({type: false, index: index});
         }
     },[actualQuestion])
 
     useEffect(()=>{
-        if(actualQuestion === 6 && questionState === "responded") return;
+        if(actualQuestion === 7 && questionState === "respond") return;
 
         let timer
 

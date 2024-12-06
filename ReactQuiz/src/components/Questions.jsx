@@ -7,8 +7,13 @@ import useVerify from "../hooks/useVerify.js";
 export default function Questions({finish}) {
     const {actualQuestion, questionState, answerValid, userAnswers, respondQuestion} = useVerify()
 
-    if(actualQuestion === 6 && questionState === "responded"){
+    if(actualQuestion === 7 && questionState === "respond"){
         finish(userAnswers)
+        return;
+    }
+
+    if(questionState === "validate"){
+        console.log(answerValid)
     }
 
     return (
