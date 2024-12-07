@@ -1,26 +1,30 @@
-import {useState} from "react";
-import Start from "./Start.jsx";
-import Questions from "./Questions";
-import Results from "./Results";
+import {useState, useCallback} from 'react';
+import QUESTIONS from '../questions.js';
+import Questions from './Questions.jsx'
+import Summary from './Summary.jsx';
 
 export default function Quiz() {
-    const [appState, setAppState] = useState({state: "pending", results: []});
+    const [userAnswers, setUserAnswers] = useState([]);
+    const activeQuestionIndex = userAnswers.length;
+    const quizComplete = QUESTIONS.length === activeQuestionIndex
 
-    function handleStart() {
-        setAppState({state: "start", results: []});
-    }
-    function handleFinish(userAnswers) {
-        setAppState({state: "finish", results: userAnswers});
-    }
-    function handleRestart() {
-        setAppState({state: "pending", results: []});
+    const handleSelectAnswer = useCallback((userAnswer) => {
+        setUserAnswers(prevAnswers => [...prevAnswers, userAnswer]);
+    }, [])
+
+    if(quizComplete){
+        return (
+            <Summary userAnswers={userAnswers}/>
+        )
     }
 
     return (
         <div id="quiz">
-            {appState.state === "pending" && <Start start={handleStart} />}
-            {appState.state === "start" && <Questions finish={handleFinish} />}
-            {appState.state === "finish" && <Results results={appState.results} restart={handleRestart} />}
+            <Questions
+                key={activeQuestionIndex}
+                index={activeQuestionIndex}
+                onSelectAnswer={handleSelectAnswer}
+            />
         </div>
     )
 }

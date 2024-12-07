@@ -1,33 +1,49 @@
-import questions from "../assets/questions.js";
-import ProgressBar from "./ProgressBar.jsx";
+import QuestionTimer from "./QuestionTimer.jsx";
+import QUESTIONS from "../questions.js";
 import Answers from "./Answers.jsx";
-import useVerify from "../hooks/useVerify.js";
+import {useCallback, useState} from "react";
 
+export default function Questions({index, onSelectAnswer}) {
+    const [answer, setAnswer] = useState({
+        selected: "",
+        isCorrect: null
+    });
 
-export default function Questions({finish}) {
-    const {actualQuestion, questionState, answerValid, userAnswers, respondQuestion} = useVerify()
+    function handleSelectAnswer(answer) {
+        setAnswer({
+            answer: answer,
+            isCorrect: null
+        })
 
-    if(actualQuestion === 7 && questionState === "respond"){
-        finish(userAnswers)
-        return;
+        setTimeout(()=>{
+            setAnswer({
+                selected: answer,
+                isCorrect: answer === QUESTIONS[index].answers[0]
+            })
+            setTimeout(()=>onSelectAnswer(answer), 2000);
+        }, 1000)
     }
 
-    if(questionState === "validate"){
-        console.log(answerValid)
+    let answerState = ""
+    if(answer.selected) {
+        answerState =  answer.isCorrect ? "correct" : "wrong";
     }
+
 
     return (
-        <div id='question'>
-            <ProgressBar
-                barStyle={questionState === "responded" ? "answered" : ""}
-                initialTime={questionState === "respond" ? 4000 : 1000}
+        <div id="question">
+            <QuestionTimer
+                onTimeout={()=>onSelectAnswer(null)}
+                answer={answer}
             />
-            <h2>{questions[actualQuestion].text}</h2>
+
+            <h2>{QUESTIONS[index].text}</h2>
+
             <Answers
-                answers={questions[actualQuestion].answers}
-                selectedAnswer={respondQuestion}
-                questionState={questionState}
-                style={answerValid}
+                answers={QUESTIONS[index].answers}
+                selectedAnswer={answer.selected}
+                answerState={answerState}
+                onSelect={handleSelectAnswer}
             />
         </div>
     )
