@@ -1,30 +1,39 @@
-import {useState, useCallback} from 'react';
-import QUESTIONS from '../questions.js';
-import Questions from './Questions.jsx'
-import Summary from './Summary.jsx';
+import {useState, useCallback, useRef} from "react";
+import QUESTIONS from "../utils/questions.js";
+import Summary from "./Summary.jsx";
+import QuestionsContainer from "./QuestionsContainer.jsx";
 
-export default function Quiz() {
-    const [userAnswers, setUserAnswers] = useState([]);
-    const activeQuestionIndex = userAnswers.length;
-    const quizComplete = QUESTIONS.length === activeQuestionIndex
+function Quiz(){
+    const [userAnswers, setUserAnswers] = useState([])
+    const actualAnswer = useRef(0)
+    const actualQuestionIndex = userAnswers.length
 
-    const handleSelectAnswer = useCallback((userAnswer) => {
-        setUserAnswers(prevAnswers => [...prevAnswers, userAnswer]);
+    const saveUserAnswer = useCallback((answer) => {
+        setUserAnswers(prevAnswers => [...prevAnswers, answer])
     }, [])
 
-    if(quizComplete){
-        return (
+    const autoSelect = useCallback(() => saveUserAnswer(null), [saveUserAnswer])
+
+    if(actualQuestionIndex === 7){
+        return(
             <Summary userAnswers={userAnswers}/>
         )
     }
 
-    return (
-        <div id="quiz">
-            <Questions
-                key={activeQuestionIndex}
-                index={activeQuestionIndex}
-                onSelectAnswer={handleSelectAnswer}
+    const shuffleAnswers = [...QUESTIONS[actualQuestionIndex].answers].sort(() => Math.random() - 0.5);
+
+    return(
+        <main id={"quiz"}>
+            <QuestionsContainer
+                key={actualQuestionIndex}
+                shuffleAnswers={shuffleAnswers}
+                actualAnswer={actualAnswer}
+                questionIndex={actualQuestionIndex}
+                saveUserAnswer={saveUserAnswer}
+                autoSelect={autoSelect}
             />
-        </div>
+        </main>
     )
 }
+
+export default Quiz;

@@ -1,5 +1,5 @@
 import quizCompleteImg from "../assets/quiz-complete.png";
-import QUESTIONS from "../questions.js"
+import QUESTIONS from "../utils/questions.js"
 
 export default function Summary({userAnswers}) {
     const skippedAnswers = userAnswers.filter((answer) => answer === null);
