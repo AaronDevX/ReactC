@@ -7,21 +7,18 @@ import Counter from './components/Counter/Counter.jsx';
 function App() {
   log('<App /> rendered');
 
-
   const [chosenCount, setChosenCount] = useState(0);
 
   function handleSet(value) {
     setChosenCount(value)
   }
 
-
-
   return (
     <>
       <Header />
       <main>
         <ConfigureCounter setCounter={handleSet} />
-        <Counter initialCount={chosenCount} />
+        <Counter key={chosenCount} initialCount={chosenCount} />
       </main>
     </>
   );
