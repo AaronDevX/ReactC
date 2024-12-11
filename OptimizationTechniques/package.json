@@ -12,6 +12,7 @@
     "vite": "^6.0.1"
   },
   "dependencies": {
+    "@million/lint": "^1.0.13",
     "@vitejs/plugin-react": "^4.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
