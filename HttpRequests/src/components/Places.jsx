@@ -1,9 +1,10 @@
-export default function Places({ title, places, fallbackText, onSelectPlace }) {
+export default function Places({ title, places, fallbackText, onSelectPlace, loading }) {
   console.log(places);
   return (
     <section className="places-category">
       <h2>{title}</h2>
-      {places.length === 0 && <p className="fallback-text">{fallbackText}</p>}
+      {loading && <p className="fallback-text">Loading...</p>}
+      {(places.length === 0 && !loading) && <p className="fallback-text">{fallbackText}</p>}
       {places.length > 0 && (
         <ul className="places">
           {places.map((place) => (
