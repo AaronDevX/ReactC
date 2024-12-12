@@ -22,7 +22,6 @@ export async function updateUserPlaces(places) {
 export async function getUserPlaces() {
     const response = await fetch('http://localhost:3000/user-places');
     const data = await response.json();
-    console.log(data);
 
     if(!response.ok){
         throw new Error("Something went wrong fetching user places");
