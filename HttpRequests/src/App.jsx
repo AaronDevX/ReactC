@@ -6,30 +6,21 @@ import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import AvailablePlaces from './components/AvailablePlaces.jsx';
 import {updateUserPlaces, getUserPlaces} from "./utils/requests.js";
+import {useFetchPlaces} from "./hooks/useFetch.js";
 import ErrorMessage from "./components/ErorMessage.jsx";
 
 function App() {
   const selectedPlace = useRef();
-
-  const [loading, setLoading] = useState(true);
-  const [userPlaces, setUserPlaces] = useState([]);
-  const [error, setError] = useState(null);
-
+  const {loading,
+        placesArr:userPlaces,
+        error: errorFetchPlaces,
+        modifyPlaces: setUserPlaces} = useFetchPlaces(getUserPlaces, []);
+  const [globalError, setGlobalError] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   useEffect(() => {
-    async function fetchUserPlaces() {
-      try{
-        setLoading(true);
-        const places = await getUserPlaces()
-        setUserPlaces(places);
-        setLoading(false);
-      }catch(error){
-        setError({ message: error.message });
-      }
-    }
-    fetchUserPlaces();
-  }, [])
+    setGlobalError(errorFetchPlaces);
+  }, [errorFetchPlaces])
 
   function handleStartRemovePlace(place) {
     setModalIsOpen(true);
@@ -44,7 +35,7 @@ function App() {
     try{
       await updateUserPlaces([selectedPlace, ...userPlaces]);
     }catch(error){
-      setError({ message: error.message || "Something went wrong selecting the place." });
+      setGlobalError({ message: error.message || "Something went wrong selecting the place." });
       return;
     }
 
@@ -64,7 +55,7 @@ function App() {
       await updateUserPlaces([...userPlaces].filter((place) => place.id !== selectedPlace.current.id));
     }catch (error){
       setModalIsOpen(false)
-      setError({ message: error.message || "Something went wrong with user places." });
+      setGlobalError({ message: error.message || "Something went wrong with user places." });
       return;
     }
 
@@ -73,12 +64,13 @@ function App() {
     );
 
     setModalIsOpen(false);
-  }, [userPlaces]);
+  }, [userPlaces, setUserPlaces]);
+
 
   return (
     <>
-      <Modal open={error} onClose={() => setError(null)}>
-        <ErrorMessage title={"Error"} message={error ? error.message :  null} />
+      <Modal open={(globalError && !errorFetchPlaces) } onClose={() => setGlobalError(null)}>
+        <ErrorMessage title={"Error"} message={globalError ? globalError.message :  null} />
       </Modal>
 
       <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
@@ -97,7 +89,8 @@ function App() {
         </p>
       </header>
       <main>
-        {!error && (<Places
+        {errorFetchPlaces && <ErrorMessage title={"Error"} message={errorFetchPlaces.message} />}
+        {!errorFetchPlaces && (<Places
             title="I'd like to visit ..."
             fallbackText="Select the places you would like to visit below."
             places={userPlaces}
