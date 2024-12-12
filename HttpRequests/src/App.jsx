@@ -6,11 +6,13 @@ import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import AvailablePlaces from './components/AvailablePlaces.jsx';
 import {updateUserPlaces} from "./utils/requests.js";
+import ErrorMessage from "./components/ErorMessage.jsx";
 
 function App() {
   const selectedPlace = useRef();
 
   const [userPlaces, setUserPlaces] = useState([]);
+  const [error, setError] = useState(null);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -24,6 +26,13 @@ function App() {
   }
 
   async function handleSelectPlace(selectedPlace) {
+    try{
+      await updateUserPlaces([selectedPlace, ...userPlaces]);
+    }catch(error){
+      setError({ message: error.message || "Something went wrong." });
+      return;
+    }
+
     setUserPlaces((prevPickedPlaces) => {
       if (!prevPickedPlaces) {
         prevPickedPlaces = [];
@@ -33,8 +42,6 @@ function App() {
       }
       return [selectedPlace, ...prevPickedPlaces];
     });
-
-    await updateUserPlaces([selectedPlace, ...userPlaces]);
   }
 
   const handleRemovePlace = useCallback(async function handleRemovePlace() {
@@ -47,6 +54,10 @@ function App() {
 
   return (
     <>
+      <Modal open={error} onClose={() => setError(null)}>
+        <ErrorMessage title={"Error"} message={error ? error.message :  null} />
+      </Modal>
+
       <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
         <DeleteConfirmation
           onCancel={handleStopRemovePlace}
