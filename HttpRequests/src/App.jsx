@@ -1,20 +1,35 @@
-import { useRef, useState, useCallback } from 'react';
+import {useRef, useState, useCallback, useEffect} from 'react';
 
 import Places from './components/Places.jsx';
 import Modal from './components/Modal.jsx';
 import DeleteConfirmation from './components/DeleteConfirmation.jsx';
 import logoImg from './assets/logo.png';
 import AvailablePlaces from './components/AvailablePlaces.jsx';
-import {updateUserPlaces} from "./utils/requests.js";
+import {updateUserPlaces, getUserPlaces} from "./utils/requests.js";
 import ErrorMessage from "./components/ErorMessage.jsx";
 
 function App() {
   const selectedPlace = useRef();
 
+  const [loading, setLoading] = useState(true);
   const [userPlaces, setUserPlaces] = useState([]);
   const [error, setError] = useState(null);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchUserPlaces() {
+      try{
+        setLoading(true);
+        const places = await getUserPlaces()
+        setUserPlaces(places);
+        setLoading(false);
+      }catch(error){
+        setError({ message: error.message });
+      }
+    }
+    fetchUserPlaces();
+  }, [])
 
   function handleStartRemovePlace(place) {
     setModalIsOpen(true);
@@ -29,7 +44,7 @@ function App() {
     try{
       await updateUserPlaces([selectedPlace, ...userPlaces]);
     }catch(error){
-      setError({ message: error.message || "Something went wrong." });
+      setError({ message: error.message || "Something went wrong selecting the place." });
       return;
     }
 
@@ -45,12 +60,20 @@ function App() {
   }
 
   const handleRemovePlace = useCallback(async function handleRemovePlace() {
+    try{
+      await updateUserPlaces([...userPlaces].filter((place) => place.id !== selectedPlace.current.id));
+    }catch (error){
+      setModalIsOpen(false)
+      setError({ message: error.message || "Something went wrong with user places." });
+      return;
+    }
+
     setUserPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
     );
 
     setModalIsOpen(false);
-  }, []);
+  }, [userPlaces]);
 
   return (
     <>
@@ -74,12 +97,13 @@ function App() {
         </p>
       </header>
       <main>
-        <Places
-          title="I'd like to visit ..."
-          fallbackText="Select the places you would like to visit below."
-          places={userPlaces}
-          onSelectPlace={handleStartRemovePlace}
-        />
+        {!error && (<Places
+            title="I'd like to visit ..."
+            fallbackText="Select the places you would like to visit below."
+            places={userPlaces}
+            onSelectPlace={handleStartRemovePlace}
+            loading={loading}
+        />)}
 
         <AvailablePlaces onSelectPlace={handleSelectPlace} />
       </main>
