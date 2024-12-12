@@ -35,7 +35,7 @@ function App() {
     try{
       await updateUserPlaces([selectedPlace, ...userPlaces]);
     }catch(error){
-      setGlobalError({ message: error.message || "Something went wrong selecting the place." });
+      setGlobalError({ message: "Something went wrong selecting the place." });
       return;
     }
 
@@ -55,14 +55,13 @@ function App() {
       await updateUserPlaces([...userPlaces].filter((place) => place.id !== selectedPlace.current.id));
     }catch (error){
       setModalIsOpen(false)
-      setGlobalError({ message: error.message || "Something went wrong with user places." });
+      setGlobalError({ message: "Something went wrong removing the place." });
       return;
     }
 
     setUserPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
     );
-
     setModalIsOpen(false);
   }, [userPlaces, setUserPlaces]);
 

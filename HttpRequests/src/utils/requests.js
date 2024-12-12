@@ -9,16 +9,6 @@ export async function getAvailablePlaces() {
     return data.places;
 }
 
-export async function updateUserPlaces(places) {
-    await fetch('http://localhost:3000/user-places', {
-        method: 'PUT',
-        body: JSON.stringify({places}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-}
-
 export async function getUserPlaces() {
     const response = await fetch('http://localhost:3000/user-places');
     const data = await response.json();
@@ -28,4 +18,14 @@ export async function getUserPlaces() {
     }
 
     return data.places;
+}
+
+export async function updateUserPlaces(places) {
+    await fetch('http://localhost:3000/user-places', {
+        method: 'PUT',
+        body: JSON.stringify({places}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
 }
