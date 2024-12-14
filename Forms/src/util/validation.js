@@ -7,7 +7,7 @@ export function isNotEmpty(value) {
 }
 
 export function hasMinLength(value, minLength) {
-  return value.length >= minLength;
+  return value.trim().length >= minLength;
 }
 
 export function isEqualsToOtherValue(value, otherValue) {

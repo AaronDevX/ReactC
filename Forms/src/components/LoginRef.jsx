@@ -1,4 +1,5 @@
 import {useRef, useState} from "react";
+import {isEmail, hasMinLength} from '../util/validation.js'
 
 export default function LoginRef() {
     const [dataValid, setDataValid] = useState({email: true, password: true})
@@ -7,8 +8,8 @@ export default function LoginRef() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        const mailIsValid = email.current.value.trim() !== "" || email.current.value.includes("@")
-        const passwordIsValid = password.current.value.trim().length > 8
+        const mailIsValid = isEmail(email.current.value)
+        const passwordIsValid = hasMinLength(password.current.value, 8)
 
         if(!mailIsValid || !passwordIsValid) {
             setDataValid({email: mailIsValid, password: passwordIsValid})
