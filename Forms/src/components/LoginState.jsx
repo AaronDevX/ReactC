@@ -1,4 +1,5 @@
 import {useState} from "react";
+import Input from "./Input";
 
 export default function LoginState() {
     const [formData, setFormData] = useState({email: "", password: ""});
@@ -36,47 +37,36 @@ export default function LoginState() {
     }
 
     return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-
-      <div className="control-row">
-          <div className="control no-margin">
-              <label htmlFor="email">Email</label>
-              <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  onFocus={() => changeSelectedState("email", true)}
-                  onBlur={() => changeSelectedState("email", false)}
-              />
-              <div className="control-error">
-                  {emailIsInvalid && <p>Please enter a valid email address.</p>}
-              </div>
-          </div>
-
-          <div className="control no-margin">
-              <label htmlFor="password">Password</label>
-              <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={(e) => handleChange("password", e.target.value)}
-                  onFocus={() => changeSelectedState("password", true)}
-                  onBlur={() => changeSelectedState("password", false)}
-              />
-              <div className="control-error">
-                  {passwordIsInvalid && <p>Please enter a valid password.</p>}
-              </div>
-          </div>
-      </div>
-
-        <p className="form-actions">
-            <button className="button button-flat">Reset</button>
-            <button className="button">Login</button>
-      </p>
-    </form>
-  );
+        <form onSubmit={handleSubmit}>
+            <h2>Login</h2>
+            <div className="control-row">
+                <Input
+                    id="email"
+                    type="email"
+                    name="email"
+                    tag="Email"
+                    error={emailIsInvalid &&  "Please enter a valid email address."}
+                    value={formData.email}
+                    onChange={(e) => handleChange("email", e.target.value)}
+                    onFocus={() => changeSelectedState("email", true)}
+                    onBlur={() => changeSelectedState("email", false)}
+                />
+                <Input
+                    id="password"
+                    type="password"
+                    name="password"
+                    tag="Password"
+                    error={passwordIsInvalid && "Please enter a valid password."}
+                    value={formData.password}
+                    onChange={(e) => handleChange("password", e.target.value)}
+                    onFocus={() => changeSelectedState("password", true)}
+                    onBlur={() => changeSelectedState("password", false)}
+                />
+            </div>
+            <p className="form-actions">
+                <button className="button button-flat" type="reset">Reset</button>
+                <button className="button">Login</button>
+            </p>
+        </form>
+);
 }
