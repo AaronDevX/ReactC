@@ -1,9 +1,9 @@
-export function isEmail(value) {
+export function emailIsValid(value) {
   return value.includes('@');
 }
 
-export function isNotEmpty(value) {
-  return value.trim() !== '';
+export function passwordIsValid(value) {
+  return hasMinLength(value, 8)
 }
 
 export function hasMinLength(value, minLength) {
